@@ -61,12 +61,64 @@ def placer_træk(placering,træk):
     hvisTur = 'O' if hvisTur == 'X' else 'X'
     hvis_plade()
 
-    
+"""    Old AI
 def computerLavTræk():
     #Ændrer 'X' til det modsatte af spillerens valgte identitet
     randomTal = random.randrange(1, 10)
     placer_træk(randomTal, 'O' if spillerIdentitet == 'X' else 'X') if valgtePlaceringErTom(randomTal) else computerLavTræk()
+"""
+def tjek_om_spiller_eller_ai_kan_vinde(List1, List2):
+    counter = 0
+    for m in List1: 
+        for n in List2: 
+            if m == n: 
+                counter += 1
+    return counter > 1
 
+def placer_træk_i_specifik_array(indeks):
+    for j in range(len(succesfuldetræk[indeks])):
+        if (valgtePlaceringErTom(succesfuldetræk[indeks][j])):
+            placer_træk(succesfuldetræk[indeks][j], 'O' if spillerIdentitet == 'X' else 'X')
+            return True
+
+def place_best_move_for_ai(i):
+    for j in range(len(succesfuldetræk[i])):
+        if (valgtePlaceringErTom(succesfuldetræk[i][j])):
+            placer_træk(succesfuldetræk[i][j], 'O' if spillerIdentitet == 'X' else 'X')
+            return True
+
+def computerLavTræk():
+    is_ran = False
+    for i in range(len(succesfuldetræk)):
+        #spiller kan vinde
+        if tjek_om_spiller_eller_ai_kan_vinde(xPos if spillerIdentitet == 'X' else oPos, succesfuldetræk[i]):
+            if placer_træk_i_specifik_array(i):
+                is_ran = True
+                break
+            #burde måske have noget logic her men who fucking knows
+
+    if not(is_ran):
+        for i in range(len(succesfuldetræk)):
+            #ai kan vinde
+            if tjek_om_spiller_eller_ai_kan_vinde(oPos if spillerIdentitet == 'X' else xPos, succesfuldetræk[i]):
+                if placer_træk_i_specifik_array(i):
+                    is_ran = True
+                    break
+
+    if not(is_ran):
+         for i in range(len(succesfuldetræk)):
+            if any(item in oPos if spillerIdentitet == 'X' else xPos for item in succesfuldetræk[i]):
+                if place_best_move_for_ai(i):
+                    is_ran = True
+                    break
+            else:
+                is_ran = True
+                randomTal = random.randrange(1, 10)
+                placer_træk(randomTal, 'O' if spillerIdentitet == 'X' else 'X') if valgtePlaceringErTom(randomTal) else computerLavTræk()
+                break
+            
+
+    
     
 erSpilletSlut = False
 
